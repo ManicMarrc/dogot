@@ -42,7 +42,25 @@ jobs:
           target: ${{ matrix.target }}
           tests: false
 
+      - name: Make universal binaries and bundle (template)
+        run: |
+          cp -r misc/dist/ios_xcode bin
+
+          strip *.a
+
+          mv bin/libgodot.ios.template_debug.arm64.luaAPI.a bin/ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
+          mv bin/libgodot.ios.template_release.arm64.luaAPI.a bin/ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
+
+          cp -r ~/VulkanSDK/*/MoltenVK/MoltenVK.xcframework ios_xcode
+          rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*
+          mkdir bin/templates
+          cd bin/ios_xcode
+          zip -q -9 -r ../templates/ios.zip *
+          cd ..
+          rm -rf ios_xcode
+
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
           name: ios-template-${{ matrix.target }}
+          path: bin/*

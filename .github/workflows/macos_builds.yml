@@ -58,6 +58,36 @@ jobs:
           strip bin/godot.*
           chmod +x bin/godot.*
 
+      - name: Make universal binaries and bundle (editor)
+        if: endsWith(matrix.cache-name, 'editor')
+        run: |
+          lipo -create bin/godot.macos.editor.x86_64 bin/godot.macos.editor.arm64 -output bin/godot.macos.editor.universal
+          strip bin/godot.macos.editor.universal
+          rm -rf bin/godot.macos.editor.x86_64 bin/godot.macos.editor.arm64
+          cp -r misc/dist/macos_tools.app Godot.app
+          mkdir Godot.app/Contents/MacOS
+          cp bin/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
+          chmod +x Godot.app/Contents/MacOS/Godot
+          cp -n 'README.md' 'LICENSE' ${{ github.workspace }}/bin
+
+      - name: Make universal binaries and bundle (template)
+        if: endsWith(matrix.cache-name, 'template')
+        run: |
+          lipo -create bin/godot.macos.template_debug.x86_64 bin/godot.macos.template_debug.arm64 -output bin/godot.macos.template_debug.universal
+          lipo -create bin/godot.macos.template_release.x86_64 bin/godot.macos.template_release.arm64 -output bin/godot.macos.template_release.universal
+          rm -rf bin/godot.macos.template_debug.x86_64 bin/godot.macos.template_debug.arm64 bin/godot.macos.template_release.x86_64 bin/godot.macos.template_release.arm64
+          strip bin/godot.*
+          cp -r misc/dist/macos_template.app macos_template.app
+          mkdir macos_template.app/Contents/MacOS
+          cp bin/godot.macos.template_debug.universal macos_template.app/Contents/MacOS/godot_macos_debug.universal
+          cp bin/godot.macos.template_release.universal macos_template.app/Contents/MacOS/godot_macos_release.universal
+          chmod +x macos_template.app/Contents/MacOS/godot_macos_debug.universal
+          chmod +x macos_template.app/Contents/MacOS/godot_macos_release.universal
+          zip -r macos.zip macos_template.app
+          rm -rf bin/*
+          mkdir bin/templates
+          mv macos.zip bin/template/macos.zip
+
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
