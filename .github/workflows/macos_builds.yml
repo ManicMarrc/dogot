@@ -24,12 +24,6 @@ jobs:
           - name: Editor
             cache-name: macos-editor
             target: editor
-            arch: arm64
-
-          - name: Editor
-            cache-name: macos-editor
-            target: editor
-            arch: x86_64
 
           - name: Template
             cache-name: macos-template
