@@ -15,16 +15,12 @@ concurrency:
 jobs:
   build-macos:
     runs-on: "macos-latest"
-    name: ${{ matrix.name }} (target=${{ matrix.target }}, arch=${{ matrix.arch }})
+    name: ${{ matrix.name }} (target=${{ matrix.target }})
     strategy:
       fail-fast: false
       matrix:
         target: [template_debug, template_release]
         include:
-          - name: Template
-            cache-name: macos-template
-            sconsflags: debug_symbols=no
-        exclude:
           - name: Editor
             cache-name: macos-editor
             target: editor
@@ -34,6 +30,10 @@ jobs:
             cache-name: macos-editor
             target: editor
             arch: x86_64
+
+          - name: Template
+            cache-name: macos-template
+            sconsflags: debug_symbols=no
 
     steps:
       - uses: actions/checkout@v3

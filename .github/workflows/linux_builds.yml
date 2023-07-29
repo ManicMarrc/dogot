@@ -24,14 +24,14 @@ jobs:
         target: [template_debug, template_release]
         arch: [x86_32, x86_64]
         include:
-          - name: Template
-            cache-name: linux-template
-            sconsflags: debug_symbols=no
-        exclude:
           - name: Editor
             cache-name: linux-editor
             target: editor
             arch: x86_64
+
+          - name: Template
+            cache-name: linux-template
+            sconsflags: debug_symbols=no
 
     steps:
       - uses: actions/checkout@v3
