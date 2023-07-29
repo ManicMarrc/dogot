@@ -47,6 +47,7 @@ jobs:
           mv x86_64-godot-linux-gnu_sdk-buildroot buildroot
           cd buildroot
           ./relocate-sdk.sh
+          echo "/opt/buildroot/bin" >> $GITHUB_PATH
       
       - name: (Linux) Install buildroot x86_32
         if: ${{ matrix.arch == 'x86_32' }}
@@ -61,6 +62,7 @@ jobs:
           mv i686-godot-linux-gnu_sdk-buildroot buildroot
           cd buildroot
           ./relocate-sdk.sh
+          echo "/opt/buildroot/bin" >> $GITHUB_PATH
 
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
