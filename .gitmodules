@@ -1,0 +1,6 @@
+[submodule "modules/voxel"]
+	path = modules/voxel
+	url = https://github.com/Zylann/godot_voxel
+[submodule "modules/luaAPI"]
+	path = modules/luaAPI
+	url = https://github.com/WeaselGames/godot_luaAPI
