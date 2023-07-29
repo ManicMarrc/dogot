@@ -19,18 +19,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [editor, template_debug, template_release]
-        arch: [arm64, x86_64]
+        target: [template_debug, template_release]
         include:
-          - name: Editor
-            cache-name: macos-editor
-
           - name: Template
             cache-name: macos-template
             sconsflags: debug_symbols=no
+        exclude:
+          - name: Editor
+            cache-name: macos-editor
+            target: editor
+            arch: arm64
+
+          - name: Editor
+            cache-name: macos-editor
+            target: editor
+            arch: x86_64
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
@@ -45,10 +53,18 @@ jobs:
         run: |
           sh misc/scripts/install_vulkan_sdk_macos.sh
 
-      - name: Compilation
+      - name: Compilation (arm64)
         uses: ./.github/actions/godot-build
         with:
-          sconsflags: ${{ env.SCONSFLAGS }} arch=${{ matrix.arch }}
+          sconsflags: ${{ env.SCONSFLAGS }} arch=arm64
+          platform: macos
+          target: ${{ matrix.target }}
+          tests: false
+
+      - name: Compilation (x86_64)
+        uses: ./.github/actions/godot-build
+        with:
+          sconsflags: ${{ env.SCONSFLAGS }} arch=x86_64
           platform: macos
           target: ${{ matrix.target }}
           tests: false
