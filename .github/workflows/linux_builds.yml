@@ -21,18 +21,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [editor, template_debug, template_release]
+        target: [template_debug, template_release]
         arch: [x86_32, x86_64]
         include:
-          - name: Editor
-            cache-name: linux-editor
-
           - name: Template
             cache-name: linux-template
             sconsflags: debug_symbols=no
+        exclude:
+          - name: Editor
+            cache-name: linux-editor
+            target: editor
+            arch: x86_64
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
       - name: (Linux) Install buildroot x86_64
         if: ${{ matrix.arch == 'x86_64' }}
@@ -103,7 +107,7 @@ jobs:
           mv templates bin
 
       - name: Upload artifact
-        uses: ./.github/actions/upload-artifact\
+        uses: ./.github/actions/upload-artifact
         with:
           name: ${{ matrix.cache-name }}-${{ matrix.target }}
           path: bin/*
