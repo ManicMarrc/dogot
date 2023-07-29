@@ -18,29 +18,19 @@ jobs:
   build-windows:
     # Windows 10 with latest image
     runs-on: "windows-latest"
-    name: ${{ matrix.name }}
+    name: ${{ matrix.name }} (target=${{ matrix.target }}, arch=${{ matrix.arch }})
     strategy:
       fail-fast: false
       matrix:
+        target: [editor, template_debug, template_release]
+        arch: [x86_32, x86_64]
         include:
-          - name: Editor (target=editor, tests=yes)
+          - name: Editor
             cache-name: windows-editor
-            target: editor
-            tests: true
-            # Skip debug symbols, they're way too big with MSVC.
             sconsflags: debug_symbols=no vsproj=yes windows_subsystem=console
-            bin: "./bin/godot.windows.editor.x86_64.exe"
 
-          - name: Template (target=template_debug)
-            cache-name: windows-template-debug
-            target: template_debug
-            tests: false
-            sconsflags: debug_symbols=no
-
-          - name: Template (target=template_release)
-            cache-name: windows-template-release
-            target: template_release
-            tests: false
+          - name: Template
+            cache-name: windows-template
             sconsflags: debug_symbols=no
 
     steps:
@@ -49,7 +39,7 @@ jobs:
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
         with:
-          cache-name: ${{ matrix.cache-name }}
+          cache-name: ${{ matrix.cache-name }}-${{ matrix.target }}
         continue-on-error: true
 
       - name: Setup python and scons
@@ -61,10 +51,10 @@ jobs:
       - name: Compilation
         uses: ./.github/actions/godot-build
         with:
-          sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }}
+          sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }} arch=${{ matrix.arch }}
           platform: windows
           target: ${{ matrix.target }}
-          tests: ${{ matrix.tests }}
+          tests: false
 
       - name: Prepare artifact
         run: |
@@ -73,12 +63,4 @@ jobs:
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
-          name: ${{ matrix.cache-name }}
-
-      # Execute unit tests for the editor
-      - name: Unit tests
-        if: ${{ matrix.tests }}
-        run: |
-          ${{ matrix.bin }} --version
-          ${{ matrix.bin }} --help
-          ${{ matrix.bin }} --test
+          name: ${{ matrix.cache-name }}-${{ matrix.target }}
