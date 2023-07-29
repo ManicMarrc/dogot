@@ -89,7 +89,21 @@ jobs:
           strip bin/godot.*
           chmod +x bin/godot.*
 
+      - name: Prepare templates
+        if: endsWith(matrix.cache-name, 'template')
+        run: |
+          mkdir -p templates
+
+          mv bin/godot.linuxbsd.template_release.x86_64 templates/linux_release.x86_64 || true
+          mv bin/godot.linuxbsd.template_debug.x86_64 templates/linux_debug.x86_64 || true
+          mv bin/godot.linuxbsd.template_release.x86_32 templates/linux_release.x86_32 || true
+          mv bin/godot.linuxbsd.template_debug.x86_32 templates/linux_debug.x86_32 || true
+
+          rm -rf bin/*
+          mv templates bin
+
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact\
         with:
           name: ${{ matrix.cache-name }}-${{ matrix.target }}
+          path: bin/*

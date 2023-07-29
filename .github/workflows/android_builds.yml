@@ -53,9 +53,15 @@ jobs:
           cd platform/android/java
           ./gradlew generateGodotTemplates
           cd ../../..
-          ls -l bin/
+          mkdir templates
+          cp bin/android_source.zip templates/android_source.zip
+          cp bin/android_debug.apk templates/android_debug.apk
+          cp bin/android_release.apk templates/android_release.apk
+          rm -rf bin/*
+          mv templates bin
 
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
           name: android-template-${{ matrix.target }}
+          path: bin/*
