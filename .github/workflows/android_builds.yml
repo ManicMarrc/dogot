@@ -36,7 +36,7 @@ jobs:
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
         with:
-          cache-name: android-template-${{ matrix.target }}
+          cache-name: android-template-${{ matrix.target }}-${{ matrix.arch }}
         continue-on-error: true
 
       - name: Setup python and scons
@@ -68,5 +68,5 @@ jobs:
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
-          name: android-template-${{ matrix.target }}
+          name: android-template-${{ matrix.target }}-${{ matrix.arch }}
           path: bin/*

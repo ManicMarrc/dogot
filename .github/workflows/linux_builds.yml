@@ -71,7 +71,7 @@ jobs:
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
         with:
-          cache-name: ${{ matrix.cache-name }}-${{ matrix.target }}
+          cache-name: ${{ matrix.cache-name }}-${{ matrix.target }}-${{ matrix.arch }}
         continue-on-error: true
 
       - name: Setup python and scons
@@ -109,5 +109,5 @@ jobs:
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
-          name: ${{ matrix.cache-name }}-${{ matrix.target }}
+          name: ${{ matrix.cache-name }}-${{ matrix.target }}-${{ matrix.arch }}
           path: bin/*
