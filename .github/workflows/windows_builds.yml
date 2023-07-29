@@ -24,17 +24,17 @@ jobs:
         target: [template_debug, template_release]
         arch: [x86_32, x86_64]
         include:
-          - name: Template
-            cache-name: windows-template
-            os: "ubuntu-20.04"
-            sconsflags: debug_symbols=no
-        exclude:
           - name: Editor
             cache-name: windows-editor
             os: "windows-latest"
             target: editor
             arch: x86_64
             sconsflags: debug_symbols=no vsproj=yes windows_subsystem=console
+
+          - name: Template
+            cache-name: windows-template
+            os: "ubuntu-20.04"
+            sconsflags: debug_symbols=no
 
     steps:
       - uses: actions/checkout@v3
