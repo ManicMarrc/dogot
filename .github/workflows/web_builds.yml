@@ -17,20 +17,11 @@ concurrency:
 jobs:
   web-template:
     runs-on: "ubuntu-20.04"
-    name: ${{ matrix.name }}
+    name: Template (target=${{ matrix.target }})
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: Template (target=template_debug)
-            cache-name: web-template-debug
-            target: template_debug
-            tests: false
-
-          - name: Template (target=template_release)
-            cache-name: web-template-release
-            target: template_release
-            tests: false
+        target: [template_debug, template_release]
 
     steps:
       - uses: actions/checkout@v3
@@ -48,7 +39,7 @@ jobs:
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
         with:
-          cache-name: ${{ matrix.cache-name }}
+          cache-name: web-template-${{ matrix.target }}
         continue-on-error: true
 
       - name: Setup python and scons
@@ -57,12 +48,12 @@ jobs:
       - name: Compilation
         uses: ./.github/actions/godot-build
         with:
-          sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }}
+          sconsflags: ${{ env.SCONSFLAGS }}
           platform: web
           target: ${{ matrix.target }}
-          tests: ${{ matrix.tests }}
+          tests: false
 
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
-          name: ${{ matrix.cache-name }}
+          name: web-template-${{ matrix.target }}

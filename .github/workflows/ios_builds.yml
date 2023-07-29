@@ -15,20 +15,12 @@ concurrency:
 jobs:
   ios-template:
     runs-on: "macos-latest"
-    name: ${{ matrix.name }}
+    name: Template (target=${{ matrix.target }}, arch=${{ matrix.arch }})
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: Template (target=template_debug)
-            cache-name: ios-template-debug
-            target: template_debug
-            tests: false
-
-          - name: Template (target=template_release)
-            cache-name: ios-template-release
-            target: template_release
-            tests: false
+        target: [template_debug, template_release]
+        arch: [arm64, x86_64]
 
     steps:
       - uses: actions/checkout@v3
@@ -36,7 +28,7 @@ jobs:
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
         with:
-          cache-name: ${{ matrix.cache-name }}
+          cache-name: ios-template-${{ matrix.target }}
         continue-on-error: true
 
       - name: Setup python and scons
@@ -45,12 +37,12 @@ jobs:
       - name: Compilation
         uses: ./.github/actions/godot-build
         with:
-          sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }}
+          sconsflags: ${{ env.SCONSFLAGS }} arch=${{ matrix.arch }}
           platform: ios
           target: ${{ matrix.target }}
-          tests: ${{ matrix.tests }}
+          tests: false
 
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
-          name: ${{ matrix.cache-name }}
+          name: ios-template-${{ matrix.target }}
