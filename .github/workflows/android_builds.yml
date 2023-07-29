@@ -48,15 +48,18 @@ jobs:
           target: ${{ matrix.target }}
           tests: false
 
-      - name: Generate Godot templates
+      - name: Make apk (template)
         run: |
           cd platform/android/java
           ./gradlew generateGodotTemplates
           cd ../../..
-          mkdir templates
-          cp bin/android_source.zip templates/android_source.zip
-          cp bin/android_debug.apk templates/android_debug.apk
-          cp bin/android_release.apk templates/android_release.apk
+          
+          mkdir -p templates
+
+          mv bin/android_source.zip templates/android_source.zip || true
+          mv bin/android_debug.apk templates/android_debug.apk || true
+          mv bin/android_release.apk templates/android_release.apk || true
+
           rm -rf bin/*
           mv templates bin
 
