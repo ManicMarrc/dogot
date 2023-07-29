@@ -4,5 +4,5 @@ The [Godot Engine](https://godotengine.org/) with pre-installed modules. You can
 
 ## Modules
 
-- [Godot Lua API](https://github.com/WeaselGames/godot_luaAPI): Adds modding capabilities using [Lua](http://www.lua.org/)
+- [Godot Lua API](https://github.com/WeaselGames/godot_luaAPI): Adds modding capabilities using [Lua](http://www.lua.org/).
 - [Voxel Tools](https://github.com/Zylann/godot_voxel): Adds a terrain class that can generate voxel terrains.
