@@ -16,25 +16,30 @@ concurrency:
 
 jobs:
   build-windows:
-    # Windows 10 with latest image
-    runs-on: "windows-latest"
+    runs-on: ${{ matrix.os }}
     name: ${{ matrix.name }} (target=${{ matrix.target }}, arch=${{ matrix.arch }})
     strategy:
       fail-fast: false
       matrix:
-        target: [editor, template_debug, template_release]
+        target: [template_debug, template_release]
         arch: [x86_32, x86_64]
         include:
-          - name: Editor
-            cache-name: windows-editor
-            sconsflags: debug_symbols=no vsproj=yes windows_subsystem=console
-
           - name: Template
             cache-name: windows-template
+            os: "ubuntu-20.04"
             sconsflags: debug_symbols=no
+        exclude:
+          - name: Editor
+            cache-name: windows-editor
+            os: "windows-latest"
+            target: editor
+            arch: x86_64
+            sconsflags: debug_symbols=no vsproj=yes windows_subsystem=console
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
@@ -45,8 +50,17 @@ jobs:
       - name: Setup python and scons
         uses: ./.github/actions/godot-deps
 
-      - name: Setup MSVC problem matcher
-        uses: ammaraskar/msvc-problem-matcher@master
+      - name: Install mingw64 (Linux)
+        if: ${{ matrix.os == 'ubuntu-20.04' }}
+        shell: sh
+        run: |
+          sudo apt update
+          sudo apt install gcc-multilib g++-multilib
+          sudo apt-get install mingw-w64
+          sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
+          sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+          sudo update-alternatives --set i686-w64-mingw32-gcc /usr/bin/i686-w64-mingw32-gcc-posix
+          sudo update-alternatives --set i686-w64-mingw32-g++ /usr/bin/i686-w64-mingw32-g++-posix
 
       - name: Compilation
         uses: ./.github/actions/godot-build
