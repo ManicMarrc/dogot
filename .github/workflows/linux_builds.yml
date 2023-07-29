@@ -69,8 +69,23 @@ jobs:
             # Skip 2GiB artifact speeding up action.
             artifact: false
 
+          - name: Template w/ Mono (target=template_debug)
+            cache-name: linux-template-mono-debug
+            target: template_debug
+            tests: false
+            sconsflags: module_mono_enabled=yes
+            build-mono: false
+            artifact: true
+
+          - name: Minimal template (target=template_debug, everything disabled)
+            cache-name: linux-template-minimal-debug
+            target: template_debug
+            tests: false
+            sconsflags: modules_enabled_by_default=no disable_3d=yes disable_advanced_gui=yes deprecated=no minizip=no
+            artifact: true
+
           - name: Template w/ Mono (target=template_release)
-            cache-name: linux-template-mono
+            cache-name: linux-template-mono-release
             target: template_release
             sconsflags: module_mono_enabled=yes
             build-mono: false
@@ -78,7 +93,7 @@ jobs:
             artifact: true
 
           - name: Minimal template (target=template_release, everything disabled)
-            cache-name: linux-template-minimal
+            cache-name: linux-template-minimal-release
             target: template_release
             sconsflags: modules_enabled_by_default=no disable_3d=yes disable_advanced_gui=yes deprecated=no minizip=no
             tests: false
