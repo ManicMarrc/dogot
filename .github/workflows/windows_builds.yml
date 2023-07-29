@@ -60,7 +60,27 @@ jobs:
         run: |
           Remove-Item bin/* -Include *.exp,*.lib,*.pdb -Force
 
+      - name: Prepare templates
+        if: endsWith(matrix.cache-name, 'template')
+        shell: bash
+        run: |
+          mkdir -p templates
+
+          mv bin/godot.windows.template_release.x86_64.exe bin/windows_release_x86_64.exe || true
+          mv bin/godot.windows.template_debug.x86_64.exe bin/windows_debug_x86_64.exe || true
+          mv bin/godot.windows.template_release.x86_32.exe bin/windows_release_x86_32.exe || true
+          mv bin/godot.windows.template_debug.x86_32.exe bin/windows_debug_x86_32.exe || true
+          
+          mv bin/godot.windows.template_release.x86_64.console.exe bin/windows_release_x86_64_console.exe || true
+          mv bin/godot.windows.template_debug.x86_64.console.exe bin/windows_debug_x86_64_console.exe || true
+          mv bin/godot.windows.template_release.x86_32.console.exe bin/windows_release_x86_32_console.exe || true
+          mv bin/godot.windows.template_debug.x86_32.console.exe bin/windows_debug_x86_32_console.exe || true
+
+          rm -rf bin/*
+          mv templates bin
+
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
           name: ${{ matrix.cache-name }}-${{ matrix.target }}
+          path: bin/*
