@@ -55,7 +55,7 @@ jobs:
 
       - name: Merge all export templates
         run: |
-          find . -name "*template*" -exec mv "{}"/bin/templates ./bin/ \;   
+          find . -maxdepth 1 -name "*template*" -exec mv "{}"/templates ./bin/ \;   
 
       - name: Upload export template
         uses: actions/upload-artifact@v2
