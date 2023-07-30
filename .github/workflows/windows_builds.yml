@@ -72,7 +72,7 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          Remove-Item bin/* -Include *.exp,*.lib,*.pdb -Force
+          rm -rf bin/* -Include *.exp,*.lib,*.pdb -Force
 
       - name: Prepare templates
         if: endsWith(matrix.cache-name, 'template')
