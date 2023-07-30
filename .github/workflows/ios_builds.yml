@@ -15,13 +15,7 @@ concurrency:
 jobs:
   ios-template:
     runs-on: "macos-latest"
-    name: Template (target=${{ matrix.target }}, arch=${{ matrix.arch }})
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [template_debug, template_release]
-        arch: [arm64]
-
+    name: Template
     steps:
       - uses: actions/checkout@v3
         with:
@@ -30,28 +24,36 @@ jobs:
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
         with:
-          cache-name: ios-template-${{ matrix.target }}-${{ matrix.arch }}
+          cache-name: ios-template
         continue-on-error: true
 
       - name: Setup python and scons
         uses: ./.github/actions/godot-deps
 
-      - name: Compilation
+      - name: Compilation (target=template_debug)
         uses: ./.github/actions/godot-build
         with:
-          sconsflags: ${{ env.SCONSFLAGS }} arch=${{ matrix.arch }}
+          sconsflags: ${{ env.SCONSFLAGS }}
           platform: ios
-          target: ${{ matrix.target }}
+          target: template_debug
+          tests: false
+
+      - name: Compilation (target=template_release)
+        uses: ./.github/actions/godot-build
+        with:
+          sconsflags: ${{ env.SCONSFLAGS }}
+          platform: ios
+          target: template_release
           tests: false
 
       - name: Make universal binaries and bundle (template)
         run: |
           cp -r misc/dist/ios_xcode bin
 
-          strip *.a
+          strip bin/*.a
 
-          mv bin/libgodot.ios.template_debug.arm64.luaAPI.a bin/ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
-          mv bin/libgodot.ios.template_release.arm64.luaAPI.a bin/ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
+          mv bin/libgodot.ios.template_debug.arm64.a bin/ios_xcode/libgodot.ios.debug.xcframework/ios-arm64/libgodot.a
+          mv bin/libgodot.ios.template_release.arm64.a bin/ios_xcode/libgodot.ios.release.xcframework/ios-arm64/libgodot.a
 
           cp -r ~/VulkanSDK/*/MoltenVK/MoltenVK.xcframework ios_xcode
           rm -rf ios_xcode/MoltenVK.xcframework/{macos,tvos}*

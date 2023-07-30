@@ -19,7 +19,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [template_debug, template_release]
         include:
           - name: Editor
             cache-name: macos-editor
@@ -27,6 +26,7 @@ jobs:
 
           - name: Template
             cache-name: macos-template
+            target: template
             sconsflags: debug_symbols=no
 
     steps:
@@ -47,20 +47,58 @@ jobs:
         run: |
           sh misc/scripts/install_vulkan_sdk_macos.sh
 
-      - name: Compilation (arm64)
+      - name: Compilation (target=editor, arch=arm64)
+        if: endsWith(matrix.cache-name, 'editor')
         uses: ./.github/actions/godot-build
         with:
           sconsflags: ${{ env.SCONSFLAGS }} arch=arm64
           platform: macos
-          target: ${{ matrix.target }}
+          target: editor
           tests: false
 
-      - name: Compilation (x86_64)
+      - name: Compilation (target=editor, arch=x86_64)
+        if: endsWith(matrix.cache-name, 'editor')
         uses: ./.github/actions/godot-build
         with:
           sconsflags: ${{ env.SCONSFLAGS }} arch=x86_64
           platform: macos
-          target: ${{ matrix.target }}
+          target: editor
+          tests: false
+
+      - name: Compilation (target=template_debug, arch=arm64)
+        if: endsWith(matrix.cache-name, 'template')
+        uses: ./.github/actions/godot-build
+        with:
+          sconsflags: ${{ env.SCONSFLAGS }} arch=arm64
+          platform: macos
+          target: template_debug
+          tests: false
+
+      - name: Compilation (target=template_debug, arch=x86_64)
+        if: endsWith(matrix.cache-name, 'template')
+        uses: ./.github/actions/godot-build
+        with:
+          sconsflags: ${{ env.SCONSFLAGS }} arch=x86_64
+          platform: macos
+          target: template_debug
+          tests: false
+
+      - name: Compilation (target=template_release, arch=arm64)
+        if: endsWith(matrix.cache-name, 'template')
+        uses: ./.github/actions/godot-build
+        with:
+          sconsflags: ${{ env.SCONSFLAGS }} arch=arm64
+          platform: macos
+          target: template_release
+          tests: false
+
+      - name: Compilation (target=template_release, arch=x86_64)
+        if: endsWith(matrix.cache-name, 'template')
+        uses: ./.github/actions/godot-build
+        with:
+          sconsflags: ${{ env.SCONSFLAGS }} arch=x86_64
+          platform: macos
+          target: template_release
           tests: false
 
       - name: Prepare artifact
