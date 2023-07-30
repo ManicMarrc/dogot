@@ -116,7 +116,7 @@ jobs:
           mkdir Godot.app/Contents/MacOS
           cp bin/godot.macos.editor.universal Godot.app/Contents/MacOS/Godot
           chmod +x Godot.app/Contents/MacOS/Godot
-          cp -n 'README.md' 'LICENSE' ${{ github.workspace }}/bin
+          cp -n 'README.md' 'LICENSE.txt' ${{ github.workspace }}/bin
 
       - name: Make universal binaries and bundle (template)
         if: endsWith(matrix.cache-name, 'template')
