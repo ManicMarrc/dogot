@@ -41,16 +41,23 @@ jobs:
     uses: ./.github/workflows/web_builds.yml
 
   template-version-file:
-    name: 📝 Create template version file
+    name: 📝 Create export template
     needs: [android-build, ios-build, linux-build, macos-build, windows-build, web-build]
     runs-on: ubuntu-latest
     steps:
       - name: Create version file
         run: |
-          mkdir -p ${{ github.workspace }}/bin/templates
-          echo 4.2.dev > ${{ github.workspace }}/bin/templates/version.txt
-      - name: Upload version file
+          mkdir -p bin/templates
+          echo 4.2.dev > bin/templates/version.txt
+
+      - name: Download all artifact
+        uses: actions/download-artifact@v3
+
+      - name: Merge all export templates
+        run: mv -f *template*/bin/* bin/
+
+      - name: Upload export template
         uses: actions/upload-artifact@v2
         with:
           name: export-templates
-          path: ${{ github.workspace }}/bin/*
+          path: bin/*
