@@ -134,7 +134,7 @@ jobs:
           zip -r macos.zip macos_template.app
           rm -rf bin/*
           mkdir bin/templates
-          mv macos.zip bin/template/macos.zip
+          mv macos.zip bin/templates/macos.zip
 
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
