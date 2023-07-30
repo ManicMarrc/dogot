@@ -66,5 +66,5 @@ jobs:
       - name: Upload artifact
         uses: ./.github/actions/upload-artifact
         with:
-          name: ios-template-${{ matrix.target }}-${{ matrix.arch }}
+          name: ios-template
           path: bin/*

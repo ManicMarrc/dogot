@@ -70,9 +70,18 @@ jobs:
           target: ${{ matrix.target }}
           tests: false
 
-      - name: Prepare artifact
+      - name: Prepare artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: bash
         run: |
-          rm -rf bin/* -Include *.exp,*.lib,*.pdb -Force
+          rm -rf scripts/godot/bin/{*.exp,*.lib,*.pdb}
+      
+      - name: Prepare artifact (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          rm -rf scripts/godot/bin/{*.exp,*.lib,*.pdb}
+          strip scripts/godot/bin/*.exe
 
       - name: Prepare templates
         if: endsWith(matrix.cache-name, 'template')
