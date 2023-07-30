@@ -54,7 +54,10 @@ jobs:
         uses: actions/download-artifact@v3
 
       - name: Merge all export templates
-        run: mv -f *template*/bin/* bin/
+        run: |
+          for dir in *template*/bin; do
+            mv -f "$dir" .
+          done
 
       - name: Upload export template
         uses: actions/upload-artifact@v2
