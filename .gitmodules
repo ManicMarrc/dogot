@@ -4,3 +4,6 @@
 [submodule "modules/luaAPI"]
 	path = modules/luaAPI
 	url = https://github.com/WeaselGames/godot_luaAPI
+[submodule "modules/wasm"]
+	path = modules/wasm
+	url = https://github.com/ashtonmeuser/godot-wasm/
