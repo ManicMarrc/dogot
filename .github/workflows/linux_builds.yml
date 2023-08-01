@@ -68,6 +68,12 @@ jobs:
           ./relocate-sdk.sh
           echo "/opt/buildroot/bin" >> $GITHUB_PATH
 
+      - name: Free disk space on runner
+        run: |
+          echo "Disk usage before:" && df -h
+          sudo rm -rf /usr/local/lib/android
+          echo "Disk usage after:" && df -h
+
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache
         with:
