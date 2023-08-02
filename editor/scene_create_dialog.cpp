@@ -127,6 +127,7 @@ void SceneCreateDialog::update_dialog() {
 		if (root_name.is_empty()) {
 			root_name_edit->set_placeholder(TTR("Leave empty to derive from scene name"));
 		} else {
+<<<<<<< HEAD
 			// Respect the desired root node casing from ProjectSettings.
 			root_name = Node::adjust_name_casing(root_name);
 			root_name_edit->set_placeholder(root_name.validate_node_name());
@@ -137,6 +138,41 @@ void SceneCreateDialog::update_dialog() {
 		validation_panel->set_message(MSG_ID_ROOT, TTR("Invalid root node name."), EditorValidationPanel::MSG_ERROR);
 	} else if (root_name != root_name.validate_node_name()) {
 		validation_panel->set_message(MSG_ID_ROOT, TTR("Invalid root node name characters have been replaced."), EditorValidationPanel::MSG_WARNING);
+=======
+			// Respect the desired root node casing from ProjectSettings and ensure it's a valid node name.
+			String adjusted_root_name = Node::adjust_name_casing(root_name);
+			root_name = adjusted_root_name.validate_node_name();
+
+			bool has_invalid_characters = root_name != adjusted_root_name;
+			if (has_invalid_characters) {
+				update_error(node_error_label, MSG_WARNING, TTR("Invalid root node name characters have been replaced."));
+			}
+
+			root_name_edit->set_placeholder(root_name);
+		}
+	}
+
+	if (root_name.is_empty() || root_name.validate_node_name() != root_name) {
+		update_error(node_error_label, MSG_ERROR, TTR("Invalid root node name."));
+		is_valid = false;
+	}
+
+	get_ok_button()->set_disabled(!is_valid);
+}
+
+void SceneCreateDialog::update_error(Label *p_label, MsgType p_type, const String &p_msg) {
+	p_label->set_text(String::utf8("•  ") + p_msg);
+	switch (p_type) {
+		case MSG_OK:
+			p_label->add_theme_color_override("font_color", get_theme_color(SNAME("success_color"), SNAME("Editor")));
+			break;
+		case MSG_ERROR:
+			p_label->add_theme_color_override("font_color", get_theme_color(SNAME("error_color"), SNAME("Editor")));
+			break;
+		case MSG_WARNING:
+			p_label->add_theme_color_override("font_color", get_theme_color(SNAME("warning_color"), SNAME("Editor")));
+			break;
+>>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	}
 }
 
