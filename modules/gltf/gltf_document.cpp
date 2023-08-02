@@ -7304,44 +7304,57 @@ Node *GLTFDocument::generate_scene(Ref<GLTFState> p_state, float p_bake_fps, boo
 	return root;
 }
 
+<<<<<<< HEAD
 Error GLTFDocument::append_from_scene(Node *p_node, Ref<GLTFState> p_state, uint32_t p_flags) {
 	ERR_FAIL_COND_V(p_state.is_null(), FAILED);
 	p_state->use_named_skin_binds = p_flags & GLTF_IMPORT_USE_NAMED_SKIN_BINDS;
 	p_state->discard_meshes_and_materials = p_flags & GLTF_IMPORT_DISCARD_MESHES_AND_MATERIALS;
 	if (!p_state->buffers.size()) {
 		p_state->buffers.push_back(Vector<uint8_t>());
+=======
+Error GLTFDocument::append_from_scene(Node *p_node, Ref<GLTFState> r_state, uint32_t p_flags) {
+	ERR_FAIL_COND_V(r_state.is_null(), FAILED);
+	r_state->use_named_skin_binds = p_flags & GLTF_IMPORT_USE_NAMED_SKIN_BINDS;
+	r_state->discard_meshes_and_materials = p_flags & GLTF_IMPORT_DISCARD_MESHES_AND_MATERIALS;
+	if (!r_state->buffers.size()) {
+		r_state->buffers.push_back(Vector<uint8_t>());
+>>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	}
 	// Perform export preflight for document extensions. Only extensions that
 	// return OK will be used for the rest of the export steps.
 	document_extensions.clear();
 	for (Ref<GLTFDocumentExtension> ext : all_document_extensions) {
 		ERR_CONTINUE(ext.is_null());
-		Error err = ext->export_preflight(p_state, p_node);
+		Error err = ext->export_preflight(r_state, p_node);
 		if (err == OK) {
 			document_extensions.push_back(ext);
 		}
 	}
 	// Add the root node(s) and their descendants to the state.
+<<<<<<< HEAD
 	_convert_scene_node(p_state, p_node, -1, -1);
+=======
+	_convert_scene_node(r_state, p_node, -1, -1);
+>>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	return OK;
 }
 
-Error GLTFDocument::append_from_buffer(PackedByteArray p_bytes, String p_base_path, Ref<GLTFState> p_state, uint32_t p_flags) {
-	ERR_FAIL_COND_V(p_state.is_null(), FAILED);
+Error GLTFDocument::append_from_buffer(PackedByteArray p_bytes, String p_base_path, Ref<GLTFState> r_state, uint32_t p_flags) {
+	ERR_FAIL_COND_V(r_state.is_null(), FAILED);
 	// TODO Add missing texture and missing .bin file paths to r_missing_deps 2021-09-10 fire
 	Error err = FAILED;
-	p_state->use_named_skin_binds = p_flags & GLTF_IMPORT_USE_NAMED_SKIN_BINDS;
-	p_state->discard_meshes_and_materials = p_flags & GLTF_IMPORT_DISCARD_MESHES_AND_MATERIALS;
+	r_state->use_named_skin_binds = p_flags & GLTF_IMPORT_USE_NAMED_SKIN_BINDS;
+	r_state->discard_meshes_and_materials = p_flags & GLTF_IMPORT_DISCARD_MESHES_AND_MATERIALS;
 
 	Ref<FileAccessMemory> file_access;
 	file_access.instantiate();
 	file_access->open_custom(p_bytes.ptr(), p_bytes.size());
-	p_state->base_path = p_base_path.get_base_dir();
-	err = _parse(p_state, p_state->base_path, file_access);
+	r_state->base_path = p_base_path.get_base_dir();
+	err = _parse(r_state, r_state->base_path, file_access);
 	ERR_FAIL_COND_V(err != OK, err);
 	for (Ref<GLTFDocumentExtension> ext : document_extensions) {
 		ERR_CONTINUE(ext.is_null());
-		err = ext->import_post_parse(p_state);
+		err = ext->import_post_parse(r_state);
 		ERR_FAIL_COND_V(err != OK, err);
 	}
 	return OK;

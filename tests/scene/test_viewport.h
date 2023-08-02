@@ -759,6 +759,7 @@ TEST_CASE("[SceneTree][Viewport] Control mouse cursor shape") {
 	}
 }
 
+<<<<<<< HEAD
 class TestArea2D : public Area2D {
 	GDCLASS(TestArea2D, Area2D);
 
@@ -1161,6 +1162,8 @@ TEST_CASE("[SceneTree][Viewport] Physics Picking 2D") {
 	}
 }
 
+=======
+>>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 TEST_CASE("[SceneTree][Viewport] Embedded Windows") {
 	Window *root = SceneTree::get_singleton()->get_root();
 	Window *w = memnew(Window);

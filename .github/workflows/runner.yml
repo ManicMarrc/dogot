@@ -40,6 +40,8 @@ jobs:
     needs: static-checks
     uses: ./.github/workflows/web_builds.yml
 
+  # Third stage: Create an export template file
+
   template-version-file:
     name: 📝 Create export template
     needs: [android-build, ios-build, linux-build, macos-build, windows-build, web-build]
