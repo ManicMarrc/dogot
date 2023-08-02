@@ -11,5 +11,4 @@ jobs:
       - uses: tgymnich/fork-sync@v1.8
         with:
           owner: godotengine
-          base: master
-          head: master
+          repo: godot
