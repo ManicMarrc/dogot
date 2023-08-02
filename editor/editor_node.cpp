@@ -6730,6 +6730,9 @@ void EditorNode::_print_handler(void *p_this, const String &p_string, bool p_err
 }
 
 void EditorNode::_print_handler_impl(const String &p_string, bool p_error, bool p_rich) {
+	if (!singleton) {
+		return;
+	}
 	if (p_error) {
 		singleton->log->add_message(p_string, EditorLog::MSG_TYPE_ERROR);
 	} else if (p_rich) {
@@ -6829,7 +6832,6 @@ EditorNode::EditorNode() {
 	// No scripting by default if in editor.
 	ScriptServer::set_scripting_enabled(false);
 
-	EditorSettings::ensure_class_registered();
 	EditorHelp::generate_doc();
 	SceneState::set_disable_placeholders(true);
 	ResourceLoader::clear_translation_remaps(); // Using no remaps if in editor.
@@ -6846,6 +6848,7 @@ EditorNode::EditorNode() {
 		DisplayServer::get_singleton()->cursor_set_custom_image(Ref<Resource>());
 	}
 
+	DEV_ASSERT(!singleton);
 	singleton = this;
 
 	EditorUndoRedoManager::get_singleton()->connect("version_changed", callable_mp(this, &EditorNode::_update_undo_redo_allowed));
@@ -8211,6 +8214,8 @@ EditorNode::~EditorNode() {
 
 	GDExtensionEditorPlugins::editor_node_add_plugin = nullptr;
 	GDExtensionEditorPlugins::editor_node_remove_plugin = nullptr;
+
+	singleton = nullptr;
 }
 
 /*
