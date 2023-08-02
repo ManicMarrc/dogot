@@ -63,6 +63,10 @@ jobs:
         run: |
           find . -maxdepth 1 -name "*template*" -exec cp -r "{}"/templates ./bin/ \;   
 
+      - name: Zip the export templates
+        run: |
+          zip -r bin/export-templates.tpz bin/templates
+
       - name: Upload export template
         uses: actions/upload-artifact@v2
         with:
