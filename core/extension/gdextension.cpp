@@ -41,6 +41,11 @@ extern GDExtensionInterfaceFunctionPtr gdextension_get_proc_address(const char *
 
 typedef GDExtensionBool (*GDExtensionLegacyInitializationFunction)(void *p_interface, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization);
 
+#ifdef WINDOWS_ENABLED
+// Prefix for temporary copies of libraries.
+#define TEMP_COPY_PREFIX "~"
+#endif
+
 String GDExtension::get_extension_list_config_file() {
 	return ProjectSettings::get_singleton()->get_project_data_path().path_join("extension_list.cfg");
 }
@@ -485,6 +490,13 @@ void GDExtension::close_library() {
 	ERR_FAIL_COND(library == nullptr);
 	OS::get_singleton()->close_dynamic_library(library);
 
+#if defined(TOOLS_ENABLED) && defined(WINDOWS_ENABLED)
+	// Delete temporary copy of library if it exists.
+	if (!temp_lib_path.is_empty() && Engine::get_singleton()->is_editor_hint()) {
+		DirAccess::remove_absolute(temp_lib_path);
+	}
+#endif
+
 	library = nullptr;
 }
 
@@ -640,6 +652,38 @@ Ref<Resource> GDExtensionResourceLoader::load(const String &p_path, const String
 	Ref<GDExtension> lib;
 	lib.instantiate();
 	String abs_path = ProjectSettings::get_singleton()->globalize_path(library_path);
+
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+	// If running on the editor on Windows, we copy the library and open the copy.
+	// This is so the original file isn't locked and can be updated by a compiler.
+	if (Engine::get_singleton()->is_editor_hint()) {
+		if (!FileAccess::exists(abs_path)) {
+			if (r_error) {
+				*r_error = ERR_FILE_NOT_FOUND;
+			}
+			ERR_PRINT("GDExtension library not found: " + library_path);
+			return Ref<Resource>();
+		}
+
+		// Copy the file to the same directory as the original. This is so relative path to dependencies are satisfied.
+		String copy_path = abs_path.get_base_dir().path_join(TEMP_COPY_PREFIX + abs_path.get_file());
+
+		Error copy_err = DirAccess::copy_absolute(abs_path, copy_path);
+		if (copy_err) {
+			if (r_error) {
+				*r_error = ERR_CANT_CREATE;
+			}
+			ERR_PRINT("Error copying GDExtension library: " + library_path);
+			return Ref<Resource>();
+		}
+
+		// Save the copied path so it can be deleted later.
+		lib->set_temp_library_path(copy_path);
+
+		// Use the copy to open the library.
+		abs_path = copy_path;
+	}
+#endif
 	err = lib->open_library(abs_path, entry_symbol);
 
 	if (r_error) {
@@ -700,3 +744,7 @@ void GDExtensionEditorPlugins::remove_extension_class(const StringName &p_class_
 	}
 }
 #endif // TOOLS_ENABLED
+
+#ifdef TEMP_COPY_PREFIX
+#undef TEMP_COPY_PREFIX
+#endif
