@@ -6,9 +6,11 @@ on:
 
 jobs:
   sync:
+    name: "Sync"
     runs-on: ubuntu-latest
     steps:
-      - uses: tgymnich/fork-sync@v1.8
+      - name: Sync Fork with upstream
+        uses: tgymnich/fork-sync@v1.8
         with:
           owner: godotengine
           repo: godot
