@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  collision_shape_3d_gizmo_plugin.h                                     */
+/*  rendering_device.compat.inc                                           */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,30 +28,14 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef COLLISION_SHAPE_3D_GIZMO_PLUGIN_H
-#define COLLISION_SHAPE_3D_GIZMO_PLUGIN_H
+#ifndef DISABLE_DEPRECATED
 
-#include "editor/plugins/node_3d_editor_gizmos.h"
+RID RenderingDevice::_shader_create_from_bytecode_bind_compat_79606(const Vector<uint8_t> &p_shader_binary) {
+	return shader_create_from_bytecode(p_shader_binary, RID());
+}
 
-class CollisionShape3DGizmoPlugin : public EditorNode3DGizmoPlugin {
-	GDCLASS(CollisionShape3DGizmoPlugin, EditorNode3DGizmoPlugin);
+void RenderingDevice::_bind_compatibility_methods() {
+	ClassDB::bind_compatibility_method(D_METHOD("shader_create_from_bytecode", "binary_data"), &RenderingDevice::_shader_create_from_bytecode_bind_compat_79606);
+}
 
-	Transform3D initial_transform;
-	Variant initial_value;
-
-public:
-	bool has_gizmo(Node3D *p_spatial) override;
-	String get_gizmo_name() const override;
-	int get_priority() const override;
-	void redraw(EditorNode3DGizmo *p_gizmo) override;
-
-	String get_handle_name(const EditorNode3DGizmo *p_gizmo, int p_id, bool p_secondary) const override;
-	Variant get_handle_value(const EditorNode3DGizmo *p_gizmo, int p_id, bool p_secondary) const override;
-	void begin_handle_action(const EditorNode3DGizmo *p_gizmo, int p_id, bool p_secondary) override;
-	void set_handle(const EditorNode3DGizmo *p_gizmo, int p_id, bool p_secondary, Camera3D *p_camera, const Point2 &p_point) override;
-	void commit_handle(const EditorNode3DGizmo *p_gizmo, int p_id, bool p_secondary, const Variant &p_restore, bool p_cancel = false) override;
-
-	CollisionShape3DGizmoPlugin();
-};
-
-#endif // COLLISION_SHAPE_3D_GIZMO_PLUGIN_H
+#endif
