@@ -65,10 +65,10 @@ jobs:
 
       - name: Zip the export templates
         run: |
-          zip -r bin/export-templates.tpz bin/templates
+          zip -r export-templates.tpz bin/templates
 
       - name: Upload export template
         uses: actions/upload-artifact@v2
         with:
           name: export-templates
-          path: bin/*
+          path: export-templates.tpz
