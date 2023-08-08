@@ -1280,6 +1280,7 @@ Ref<Theme> create_editor_theme(const Ref<Theme> p_theme) {
 	}
 
 	theme->set_stylebox("panel", "Tree", style_tree_bg);
+	theme->set_stylebox("panel", "EditorValidationPanel", style_tree_bg);
 
 	// Tree
 	theme->set_icon("checked", "Tree", theme->get_icon(SNAME("GuiChecked"), SNAME("EditorIcons")));
@@ -1969,7 +1970,7 @@ Ref<Theme> create_editor_theme(const Ref<Theme> p_theme) {
 	theme->set_color("files_disabled", "FileDialog", font_disabled_color);
 
 	// ColorPicker
-	theme->set_constant("margin", "ColorPicker", popup_margin_size);
+	theme->set_constant("margin", "ColorPicker", default_margin_size);
 	theme->set_constant("sv_width", "ColorPicker", 256 * EDSCALE);
 	theme->set_constant("sv_height", "ColorPicker", 256 * EDSCALE);
 	theme->set_constant("h_width", "ColorPicker", 30 * EDSCALE);

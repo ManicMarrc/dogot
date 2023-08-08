@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  noise_texture_3d.h                                                    */
+/*  editor_validation_panel.h                                             */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,88 +28,61 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef NOISE_TEXTURE_3D_H
-#define NOISE_TEXTURE_3D_H
+#ifndef EDITOR_VALIDATION_PANEL_H
+#define EDITOR_VALIDATION_PANEL_H
 
-#include "noise.h"
+#include "scene/gui/panel_container.h"
 
-#include "core/object/ref_counted.h"
-#include "scene/resources/texture.h"
+class Button;
+class Label;
+class VBoxContainer;
 
-class NoiseTexture3D : public Texture3D {
-	GDCLASS(NoiseTexture3D, Texture3D);
-
-private:
-	Thread noise_thread;
-
-	bool first_time = true;
-	bool update_queued = false;
-	bool regen_queued = false;
-
-	mutable RID texture;
-	uint32_t flags = 0;
-
-	int width = 64;
-	int height = 64;
-	int depth = 64;
-	bool invert = false;
-	bool seamless = false;
-	real_t seamless_blend_skirt = 0.1;
-	bool normalize = true;
-
-	Ref<Gradient> color_ramp;
-	Ref<Noise> noise;
-
-	Image::Format format = Image::FORMAT_L8;
-
-	void _thread_done(const TypedArray<Image> &p_data);
-	static void _thread_function(void *p_ud);
-
-	void _queue_update();
-	TypedArray<Image> _generate_texture();
-	void _update_texture();
-	void _set_texture_data(const TypedArray<Image> &p_data);
-
-	Ref<Image> _modulate_with_gradient(Ref<Image> p_image, Ref<Gradient> p_gradient);
-
-protected:
-	static void _bind_methods();
-	void _validate_property(PropertyInfo &p_property) const;
+class EditorValidationPanel : public PanelContainer {
+	GDCLASS(EditorValidationPanel, PanelContainer);
 
 public:
-	void set_noise(Ref<Noise> p_noise);
-	Ref<Noise> get_noise();
+	enum MessageType {
+		MSG_OK,
+		MSG_WARNING,
+		MSG_ERROR,
+		MSG_INFO,
+	};
 
-	void set_width(int p_width);
-	void set_height(int p_height);
-	void set_depth(int p_depth);
+	static const int MSG_ID_DEFAULT = 0; // Avoids hard-coding ID in dialogs with single-line validation.
 
-	void set_invert(bool p_invert);
-	bool get_invert() const;
+private:
+	VBoxContainer *message_container = nullptr;
 
-	void set_seamless(bool p_seamless);
-	bool get_seamless();
+	HashMap<int, String> valid_messages;
+	HashMap<int, Label *> labels;
 
-	void set_seamless_blend_skirt(real_t p_blend_skirt);
-	real_t get_seamless_blend_skirt();
+	bool valid = false;
+	bool pending_update = false;
 
-	void set_normalize(bool p_normalize);
-	bool is_normalized() const;
+	struct ThemeCache {
+		Color valid_color;
+		Color warning_color;
+		Color error_color;
+	} theme_cache;
 
-	void set_color_ramp(const Ref<Gradient> &p_gradient);
-	Ref<Gradient> get_color_ramp() const;
+	void _update();
 
-	virtual int get_width() const override;
-	virtual int get_height() const override;
-	virtual int get_depth() const override;
+	Callable update_callback;
+	Button *accept_button = nullptr;
 
-	virtual RID get_rid() const override;
+protected:
+	void _notification(int p_what);
 
-	virtual Vector<Ref<Image>> get_data() const override;
-	virtual Image::Format get_format() const override;
+public:
+	void add_line(int p_id, const String &p_valid_message = "");
+	void set_accept_button(Button *p_button);
+	void set_update_callback(const Callable &p_callback);
 
-	NoiseTexture3D();
-	virtual ~NoiseTexture3D();
+	void update();
+	void set_message(int p_id, const String &p_text, MessageType p_type, bool p_auto_prefix = true);
+	bool is_valid() const;
+
+	EditorValidationPanel();
 };
 
-#endif // NOISE_TEXTURE_3D_H
+#endif // EDITOR_VALIDATION_PANEL_H
