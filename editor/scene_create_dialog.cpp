@@ -127,18 +127,6 @@ void SceneCreateDialog::update_dialog() {
 		if (root_name.is_empty()) {
 			root_name_edit->set_placeholder(TTR("Leave empty to derive from scene name"));
 		} else {
-<<<<<<< HEAD
-			// Respect the desired root node casing from ProjectSettings.
-			root_name = Node::adjust_name_casing(root_name);
-			root_name_edit->set_placeholder(root_name.validate_node_name());
-		}
-	}
-
-	if (root_name.is_empty()) {
-		validation_panel->set_message(MSG_ID_ROOT, TTR("Invalid root node name."), EditorValidationPanel::MSG_ERROR);
-	} else if (root_name != root_name.validate_node_name()) {
-		validation_panel->set_message(MSG_ID_ROOT, TTR("Invalid root node name characters have been replaced."), EditorValidationPanel::MSG_WARNING);
-=======
 			// Respect the desired root node casing from ProjectSettings and ensure it's a valid node name.
 			String adjusted_root_name = Node::adjust_name_casing(root_name);
 			root_name = adjusted_root_name.validate_node_name();
@@ -172,7 +160,6 @@ void SceneCreateDialog::update_error(Label *p_label, MsgType p_type, const Strin
 		case MSG_WARNING:
 			p_label->add_theme_color_override("font_color", get_theme_color(SNAME("warning_color"), SNAME("Editor")));
 			break;
->>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	}
 }
 

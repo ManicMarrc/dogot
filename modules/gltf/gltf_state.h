@@ -126,13 +126,8 @@ public:
 	int get_minor_version();
 	void set_minor_version(int p_minor_version);
 
-<<<<<<< HEAD
-	String get_copyright() const;
-	void set_copyright(const String &p_copyright);
-=======
 	String get_copyright();
 	void set_copyright(String p_copyright);
->>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 
 	Vector<uint8_t> get_glb_data();
 	void set_glb_data(Vector<uint8_t> p_glb_data);

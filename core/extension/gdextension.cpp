@@ -666,14 +666,8 @@ Ref<Resource> GDExtensionResourceLoader::load(const String &p_path, const String
 			return Ref<Resource>();
 		}
 
-<<<<<<< HEAD
-		// Copy the file to the same directory as the original with a prefix in the name.
-		// This is so relative path to dependencies are satisfied.
-		String copy_path = abs_path.get_base_dir().path_join("~" + abs_path.get_file());
-=======
 		// Copy the file to the same directory as the original. This is so relative path to dependencies are satisfied.
 		String copy_path = abs_path.get_base_dir().path_join(TEMP_COPY_PREFIX + abs_path.get_file());
->>>>>>> 07bca3dc5c (GDExtension: Copy DLL to a temp file before opening)
 
 		Error copy_err = DirAccess::copy_absolute(abs_path, copy_path);
 		if (copy_err) {
@@ -683,10 +677,6 @@ Ref<Resource> GDExtensionResourceLoader::load(const String &p_path, const String
 			ERR_PRINT("Error copying GDExtension library: " + library_path);
 			return Ref<Resource>();
 		}
-<<<<<<< HEAD
-		FileAccess::set_hidden_attribute(copy_path, true);
-=======
->>>>>>> 07bca3dc5c (GDExtension: Copy DLL to a temp file before opening)
 
 		// Save the copied path so it can be deleted later.
 		lib->set_temp_library_path(copy_path);
