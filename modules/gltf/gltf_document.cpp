@@ -7304,21 +7304,12 @@ Node *GLTFDocument::generate_scene(Ref<GLTFState> p_state, float p_bake_fps, boo
 	return root;
 }
 
-<<<<<<< HEAD
 Error GLTFDocument::append_from_scene(Node *p_node, Ref<GLTFState> p_state, uint32_t p_flags) {
 	ERR_FAIL_COND_V(p_state.is_null(), FAILED);
 	p_state->use_named_skin_binds = p_flags & GLTF_IMPORT_USE_NAMED_SKIN_BINDS;
 	p_state->discard_meshes_and_materials = p_flags & GLTF_IMPORT_DISCARD_MESHES_AND_MATERIALS;
 	if (!p_state->buffers.size()) {
 		p_state->buffers.push_back(Vector<uint8_t>());
-=======
-Error GLTFDocument::append_from_scene(Node *p_node, Ref<GLTFState> r_state, uint32_t p_flags) {
-	ERR_FAIL_COND_V(r_state.is_null(), FAILED);
-	r_state->use_named_skin_binds = p_flags & GLTF_IMPORT_USE_NAMED_SKIN_BINDS;
-	r_state->discard_meshes_and_materials = p_flags & GLTF_IMPORT_DISCARD_MESHES_AND_MATERIALS;
-	if (!r_state->buffers.size()) {
-		r_state->buffers.push_back(Vector<uint8_t>());
->>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	}
 	// Perform export preflight for document extensions. Only extensions that
 	// return OK will be used for the rest of the export steps.
@@ -7331,11 +7322,7 @@ Error GLTFDocument::append_from_scene(Node *p_node, Ref<GLTFState> r_state, uint
 		}
 	}
 	// Add the root node(s) and their descendants to the state.
-<<<<<<< HEAD
 	_convert_scene_node(p_state, p_node, -1, -1);
-=======
-	_convert_scene_node(r_state, p_node, -1, -1);
->>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	return OK;
 }
 

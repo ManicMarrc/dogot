@@ -81,10 +81,7 @@ public:
 
 #if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
 	void set_temp_library_path(const String &p_path) { temp_lib_path = p_path; }
-<<<<<<< HEAD
 	String get_temp_library_path() const { return temp_lib_path; }
-=======
->>>>>>> 07bca3dc5c (GDExtension: Copy DLL to a temp file before opening)
 #endif
 
 	enum InitializationLevel {

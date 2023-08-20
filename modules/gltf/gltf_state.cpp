@@ -167,19 +167,11 @@ void GLTFState::set_minor_version(int p_minor_version) {
 	minor_version = p_minor_version;
 }
 
-<<<<<<< HEAD
 String GLTFState::get_copyright() const {
 	return copyright;
 }
 
 void GLTFState::set_copyright(const String &p_copyright) {
-=======
-String GLTFState::get_copyright() {
-	return copyright;
-}
-
-void GLTFState::set_copyright(String p_copyright) {
->>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	copyright = p_copyright;
 }
 
