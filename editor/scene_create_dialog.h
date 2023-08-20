@@ -45,10 +45,16 @@ class OptionButton;
 class SceneCreateDialog : public ConfirmationDialog {
 	GDCLASS(SceneCreateDialog, ConfirmationDialog);
 
+<<<<<<< HEAD
+	enum {
+		MSG_ID_PATH,
+		MSG_ID_ROOT,
+=======
 	enum MsgType {
 		MSG_OK,
 		MSG_ERROR,
 		MSG_WARNING,
+>>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	};
 
 	const StringName type_meta = StringName("type");
