@@ -7322,11 +7322,7 @@ Error GLTFDocument::append_from_scene(Node *p_node, Ref<GLTFState> r_state, uint
 		}
 	}
 	// Add the root node(s) and their descendants to the state.
-<<<<<<< HEAD
-	_convert_scene_node(p_state, p_node, -1, -1);
-=======
 	_convert_scene_node(r_state, p_node, -1, -1);
->>>>>>> 1ae1b797aa (Merge branch 'godotengine-master')
 	return OK;
 }
 
