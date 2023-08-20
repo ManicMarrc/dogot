@@ -167,11 +167,11 @@ void GLTFState::set_minor_version(int p_minor_version) {
 	minor_version = p_minor_version;
 }
 
-String GLTFState::get_copyright() const {
+String GLTFState::get_copyright() {
 	return copyright;
 }
 
-void GLTFState::set_copyright(const String &p_copyright) {
+void GLTFState::set_copyright(String p_copyright) {
 	copyright = p_copyright;
 }
 
