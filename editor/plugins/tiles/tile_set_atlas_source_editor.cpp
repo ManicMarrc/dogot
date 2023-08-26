@@ -111,7 +111,7 @@ void TileSetAtlasSourceEditor::TileSetAtlasSourceProxyObject::_get_property_list
 	p_list->push_back(PropertyInfo(Variant::STRING, PNAME("name")));
 	p_list->push_back(PropertyInfo(Variant::OBJECT, PNAME("texture"), PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"));
 	p_list->push_back(PropertyInfo(Variant::VECTOR2I, PNAME("margins"), PROPERTY_HINT_NONE, "suffix:px"));
-	p_list->push_back(PropertyInfo(Variant::VECTOR2I, PNAME("separation")));
+	p_list->push_back(PropertyInfo(Variant::VECTOR2I, PNAME("separation"), PROPERTY_HINT_NONE, "suffix:px"));
 	p_list->push_back(PropertyInfo(Variant::VECTOR2I, PNAME("texture_region_size"), PROPERTY_HINT_NONE, "suffix:px"));
 	p_list->push_back(PropertyInfo(Variant::BOOL, PNAME("use_texture_padding")));
 }
@@ -990,7 +990,6 @@ void TileSetAtlasSourceEditor::_update_atlas_view() {
 
 			// Create and position the button.
 			Button *button = memnew(Button);
-			alternative_tiles_control->add_child(button);
 			button->set_flat(true);
 			button->set_icon(get_theme_icon(SNAME("Add"), SNAME("EditorIcons")));
 			button->add_theme_style_override("normal", memnew(StyleBoxEmpty));
@@ -1000,6 +999,7 @@ void TileSetAtlasSourceEditor::_update_atlas_view() {
 			button->connect("pressed", callable_mp(tile_set_atlas_source, &TileSetAtlasSource::create_alternative_tile).bind(tile_id, TileSetSource::INVALID_TILE_ALTERNATIVE));
 			button->set_rect(Rect2(Vector2(pos.x, pos.y + (y_increment - texture_region_base_size.y) / 2.0), Vector2(texture_region_base_size_min, texture_region_base_size_min)));
 			button->set_expand_icon(true);
+			alternative_tiles_control->add_child(button);
 
 			pos.y += y_increment;
 		}
