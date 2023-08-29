@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  openxr_select_interaction_profile_dialog.h                            */
+/*  editor_scene_tabs.h                                                   */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,40 +28,67 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
-#define OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
+#ifndef EDITOR_SCENE_TABS_H
+#define EDITOR_SCENE_TABS_H
 
-#include "../action_map/openxr_interaction_profile_metadata.h"
+#include "scene/gui/margin_container.h"
 
-#include "scene/gui/box_container.h"
-#include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
-#include "scene/gui/label.h"
-#include "scene/gui/line_edit.h"
-#include "scene/gui/scroll_container.h"
-#include "scene/gui/separator.h"
-#include "scene/gui/text_edit.h"
+class Button;
+class HBoxContainer;
+class Panel;
+class PanelContainer;
+class PopupMenu;
+class TabBar;
+class TextureRect;
 
-class OpenXRSelectInteractionProfileDialog : public ConfirmationDialog {
-	GDCLASS(OpenXRSelectInteractionProfileDialog, ConfirmationDialog);
+class EditorSceneTabs : public MarginContainer {
+	GDCLASS(EditorSceneTabs, MarginContainer);
 
-private:
-	String selected_interaction_profile;
-	Dictionary ip_buttons;
+	static EditorSceneTabs *singleton;
 
-	VBoxContainer *main_vb = nullptr;
-	ScrollContainer *scroll = nullptr;
+	PanelContainer *tabbar_panel = nullptr;
+	HBoxContainer *tabbar_container = nullptr;
+
+	TabBar *scene_tabs = nullptr;
+	PopupMenu *scene_tabs_context_menu = nullptr;
+	Button *scene_tab_add = nullptr;
+	Control *scene_tab_add_ph = nullptr;
+
+	Panel *tab_preview_panel = nullptr;
+	TextureRect *tab_preview = nullptr;
+
+	void _scene_tab_changed(int p_tab);
+	void _scene_tab_script_edited(int p_tab);
+	void _scene_tab_closed(int p_tab);
+	void _scene_tab_hovered(int p_tab);
+	void _scene_tab_exit();
+	void _scene_tab_input(const Ref<InputEvent> &p_input);
+
+	void _reposition_active_tab(int p_to_index);
+	void _update_context_menu();
+
+	void _tab_preview_done(const String &p_path, const Ref<Texture2D> &p_preview, const Ref<Texture2D> &p_small_preview, const Variant &p_udata);
+
+	void _global_menu_scene(const Variant &p_tag);
+	void _global_menu_new_window(const Variant &p_tag);
+
+	virtual void shortcut_input(const Ref<InputEvent> &p_event) override;
 
 protected:
-	static void _bind_methods();
 	void _notification(int p_what);
+	static void _bind_methods();
 
 public:
-	void _on_select_interaction_profile(const String p_interaction_profile);
-	void open(PackedStringArray p_do_not_include);
-	virtual void ok_pressed() override;
+	static EditorSceneTabs *get_singleton() { return singleton; }
 
-	OpenXRSelectInteractionProfileDialog();
+	void add_extra_button(Button *p_button);
+
+	void set_current_tab(int p_tab);
+	int get_current_tab() const;
+
+	void update_scene_tabs();
+
+	EditorSceneTabs();
 };
 
-#endif // OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
+#endif // EDITOR_SCENE_TABS_H

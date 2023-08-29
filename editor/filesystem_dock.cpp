@@ -45,6 +45,7 @@
 #include "editor/editor_scale.h"
 #include "editor/editor_settings.h"
 #include "editor/gui/editor_dir_dialog.h"
+#include "editor/gui/editor_scene_tabs.h"
 #include "editor/import/resource_importer_scene.h"
 #include "editor/import_dock.h"
 #include "editor/plugins/editor_resource_tooltip_plugins.h"
@@ -1361,7 +1362,7 @@ void FileSystemDock::_try_move_item(const FileOrFolder &p_item, const String &p_
 		for (int i = 0; i < file_changed_paths.size(); ++i) {
 			String new_item_path = p_item.is_file ? new_path : file_changed_paths[i].replace_first(old_path, new_path);
 			if (ResourceLoader::get_resource_type(new_item_path) == "PackedScene" && EditorNode::get_singleton()->is_scene_open(file_changed_paths[i])) {
-				EditorData *ed = &EditorNode::get_singleton()->get_editor_data();
+				EditorData *ed = &EditorNode::get_editor_data();
 				for (int j = 0; j < ed->get_edited_scene_count(); j++) {
 					if (ed->get_scene_path(j) == file_changed_paths[i]) {
 						ed->get_edited_scene_root(j)->set_scene_file_path(new_item_path);
@@ -1629,7 +1630,7 @@ void FileSystemDock::_make_scene_confirm() {
 	const String scene_path = make_scene_dialog->get_scene_path();
 
 	int idx = EditorNode::get_singleton()->new_scene();
-	EditorNode::get_singleton()->get_editor_data().set_scene_path(idx, scene_path);
+	EditorNode::get_editor_data().set_scene_path(idx, scene_path);
 	EditorNode::get_singleton()->set_edited_scene(make_scene_dialog->create_scene_root());
 	EditorNode::get_singleton()->save_scene_list({ scene_path });
 }
@@ -1732,14 +1733,14 @@ void FileSystemDock::_rename_operation_confirm() {
 	HashMap<String, String> folder_renames;
 	_try_move_item(to_rename, new_path, file_renames, folder_renames);
 
-	int current_tab = EditorNode::get_singleton()->get_current_tab();
+	int current_tab = EditorSceneTabs::get_singleton()->get_current_tab();
 	_save_scenes_after_move(file_renames); // save scenes before updating
 	_update_dependencies_after_move(file_renames);
 	_update_resource_paths_after_move(file_renames);
 	_update_project_settings_after_move(file_renames);
 	_update_favorites_list_after_move(file_renames, folder_renames);
 
-	EditorNode::get_singleton()->set_current_tab(current_tab);
+	EditorSceneTabs::get_singleton()->set_current_tab(current_tab);
 
 	print_verbose("FileSystem: calling rescan.");
 	_rescan();
@@ -1881,14 +1882,14 @@ void FileSystemDock::_move_operation_confirm(const String &p_to_path, bool p_cop
 		}
 
 		if (is_moved) {
-			int current_tab = EditorNode::get_singleton()->get_current_tab();
+			int current_tab = EditorSceneTabs::get_singleton()->get_current_tab();
 			_save_scenes_after_move(file_renames); // Save scenes before updating.
 			_update_dependencies_after_move(file_renames);
 			_update_resource_paths_after_move(file_renames);
 			_update_project_settings_after_move(file_renames);
 			_update_favorites_list_after_move(file_renames, folder_renames);
 
-			EditorNode::get_singleton()->set_current_tab(current_tab);
+			EditorSceneTabs::get_singleton()->set_current_tab(current_tab);
 
 			print_verbose("FileSystem: calling rescan.");
 			_rescan();

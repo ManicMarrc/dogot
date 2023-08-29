@@ -177,7 +177,11 @@ void TileMapEditorTilesPlugin::_update_tile_set_sources_list() {
 		if (scene_collection_source) {
 			texture = tiles_bottom_panel->get_theme_icon(SNAME("PackedScene"), SNAME("EditorIcons"));
 			if (item_text.is_empty()) {
-				item_text = vformat(TTR("Scene Collection Source (ID: %d)"), source_id);
+				if (scene_collection_source->get_scene_tiles_count() > 0) {
+					item_text = vformat(TTR("Scene Collection Source (ID: %d)"), source_id);
+				} else {
+					item_text = vformat(TTR("Empty Scene Collection Source (ID: %d)"), source_id);
+				}
 			}
 		}
 
@@ -397,6 +401,10 @@ void TileMapEditorTilesPlugin::_update_scenes_collection_view() {
 		if (tile_set_selection.has(TileMapCell(source_id, Vector2i(), scene_id))) {
 			scene_tiles_list->select(item_index, false);
 		}
+	}
+	if (scene_tiles_list->get_item_count() == 0) {
+		scene_tiles_list->add_item(TTR("The selected scene collection source has no scenes. Add scenes in the TileSet bottom tab."));
+		scene_tiles_list->set_item_disabled(-1, true);
 	}
 
 	// Icon size update.
@@ -4123,7 +4131,7 @@ TileMapEditor::TileMapEditor() {
 	_tab_changed(0);
 
 	// Registers UndoRedo inspector callback.
-	EditorNode::get_singleton()->get_editor_data().add_move_array_element_function(SNAME("TileMap"), callable_mp(this, &TileMapEditor::_move_tile_map_array_element));
+	EditorNode::get_editor_data().add_move_array_element_function(SNAME("TileMap"), callable_mp(this, &TileMapEditor::_move_tile_map_array_element));
 }
 
 TileMapEditor::~TileMapEditor() {

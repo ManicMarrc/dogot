@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  openxr_select_interaction_profile_dialog.h                            */
+/*  font.compat.inc                                                       */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,40 +28,14 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
-#define OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
+#ifndef DISABLE_DEPRECATED
 
-#include "../action_map/openxr_interaction_profile_metadata.h"
+RID Font::_find_variation_compat_80954(const Dictionary &p_variation_coordinates, int p_face_index, float p_strength, Transform2D p_transform) const {
+	return find_variation(p_variation_coordinates, p_face_index, p_strength, p_transform, 0, 0, 0, 0);
+}
 
-#include "scene/gui/box_container.h"
-#include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
-#include "scene/gui/label.h"
-#include "scene/gui/line_edit.h"
-#include "scene/gui/scroll_container.h"
-#include "scene/gui/separator.h"
-#include "scene/gui/text_edit.h"
+void Font::_bind_compatibility_methods() {
+	ClassDB::bind_compatibility_method(D_METHOD("find_variation", "variation_coordinates", "face_index", "strength", "transform"), &Font::_find_variation_compat_80954, DEFVAL(0), DEFVAL(0.0), DEFVAL(Transform2D()));
+}
 
-class OpenXRSelectInteractionProfileDialog : public ConfirmationDialog {
-	GDCLASS(OpenXRSelectInteractionProfileDialog, ConfirmationDialog);
-
-private:
-	String selected_interaction_profile;
-	Dictionary ip_buttons;
-
-	VBoxContainer *main_vb = nullptr;
-	ScrollContainer *scroll = nullptr;
-
-protected:
-	static void _bind_methods();
-	void _notification(int p_what);
-
-public:
-	void _on_select_interaction_profile(const String p_interaction_profile);
-	void open(PackedStringArray p_do_not_include);
-	virtual void ok_pressed() override;
-
-	OpenXRSelectInteractionProfileDialog();
-};
-
-#endif // OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
+#endif

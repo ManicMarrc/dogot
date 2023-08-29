@@ -243,9 +243,6 @@ void RichTextLabel::_update_line_font(ItemFrame *p_frame, int p_line, const Ref<
 				font_size = font_size_it->font_size;
 			}
 			TS->shaped_set_span_update_font(t, i, font->get_rids(), font_size, font->get_opentype_features());
-			for (int j = 0; j < TextServer::SPACING_MAX; j++) {
-				TS->shaped_text_set_spacing(t, TextServer::SpacingType(j), font->get_spacing(TextServer::SpacingType(j)));
-			}
 		}
 	}
 
@@ -5310,6 +5307,8 @@ void RichTextLabel::selection_copy() {
 }
 
 void RichTextLabel::select_all() {
+	_validate_line_caches();
+
 	if (!selection.enabled) {
 		return;
 	}
@@ -5322,13 +5321,12 @@ void RichTextLabel::select_all() {
 		if (it->type != ITEM_FRAME) {
 			if (!from_item) {
 				from_item = it;
-			} else {
-				to_item = it;
 			}
+			to_item = it;
 		}
 		it = _get_next_item(it, true);
 	}
-	if (!from_item || !to_item) {
+	if (!from_item) {
 		return;
 	}
 
@@ -5875,13 +5873,21 @@ int RichTextLabel::get_character_line(int p_char) {
 		int char_offset = main->lines[i].char_offset;
 		int char_count = main->lines[i].char_count;
 		if (char_offset <= p_char && p_char < char_offset + char_count) {
-			for (int j = 0; j < main->lines[i].text_buf->get_line_count(); j++) {
+			int lc = main->lines[i].text_buf->get_line_count();
+			for (int j = 0; j < lc; j++) {
 				Vector2i range = main->lines[i].text_buf->get_line_range(j);
-				if (char_offset + range.x <= p_char && p_char <= char_offset + range.y) {
-					return line_count;
+				if (char_offset + range.x <= p_char && p_char < char_offset + range.y) {
+					break;
 				}
-				line_count++;
+				if (char_offset + range.x > p_char && line_count > 0) {
+					line_count--; // Character is not rendered and is between the lines (e.g., edge space).
+					break;
+				}
+				if (j != lc - 1) {
+					line_count++;
+				}
 			}
+			return line_count;
 		} else {
 			line_count += main->lines[i].text_buf->get_line_count();
 		}

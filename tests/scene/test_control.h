@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  openxr_select_interaction_profile_dialog.h                            */
+/*  test_control.h                                                        */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,40 +28,39 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
-#define OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
+#ifndef TEST_CONTROL_H
+#define TEST_CONTROL_H
 
-#include "../action_map/openxr_interaction_profile_metadata.h"
+#include "scene/gui/control.h"
 
-#include "scene/gui/box_container.h"
-#include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
-#include "scene/gui/label.h"
-#include "scene/gui/line_edit.h"
-#include "scene/gui/scroll_container.h"
-#include "scene/gui/separator.h"
-#include "scene/gui/text_edit.h"
+#include "tests/test_macros.h"
 
-class OpenXRSelectInteractionProfileDialog : public ConfirmationDialog {
-	GDCLASS(OpenXRSelectInteractionProfileDialog, ConfirmationDialog);
+namespace TestControl {
 
-private:
-	String selected_interaction_profile;
-	Dictionary ip_buttons;
+TEST_CASE("[SceneTree][Control]") {
+	SUBCASE("[Control][Global Transform] Global Transform should be accessible while not in SceneTree.") { // GH-79453
+		Control *test_node = memnew(Control);
+		Control *test_child = memnew(Control);
+		test_node->add_child(test_child);
 
-	VBoxContainer *main_vb = nullptr;
-	ScrollContainer *scroll = nullptr;
+		test_node->set_global_position(Point2(1, 1));
+		CHECK_EQ(test_node->get_global_position(), Point2(1, 1));
+		CHECK_EQ(test_child->get_global_position(), Point2(1, 1));
+		test_node->set_global_position(Point2(2, 2));
+		CHECK_EQ(test_node->get_global_position(), Point2(2, 2));
+		test_node->set_scale(Vector2(4, 4));
+		CHECK_EQ(test_node->get_global_transform(), Transform2D(0, Size2(4, 4), 0, Vector2(2, 2)));
+		test_node->set_scale(Vector2(1, 1));
+		test_node->set_rotation_degrees(90);
+		CHECK_EQ(test_node->get_global_transform(), Transform2D(Math_PI / 2, Vector2(2, 2)));
+		test_node->set_pivot_offset(Vector2(1, 0));
+		CHECK_EQ(test_node->get_global_transform(), Transform2D(Math_PI / 2, Vector2(3, 1)));
 
-protected:
-	static void _bind_methods();
-	void _notification(int p_what);
+		memdelete(test_child);
+		memdelete(test_node);
+	}
+}
 
-public:
-	void _on_select_interaction_profile(const String p_interaction_profile);
-	void open(PackedStringArray p_do_not_include);
-	virtual void ok_pressed() override;
+} // namespace TestControl
 
-	OpenXRSelectInteractionProfileDialog();
-};
-
-#endif // OPENXR_SELECT_INTERACTION_PROFILE_DIALOG_H
+#endif // TEST_CONTROL_H

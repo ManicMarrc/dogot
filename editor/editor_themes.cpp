@@ -245,7 +245,7 @@ static Ref<StyleBoxLine> make_line_stylebox(Color p_color, int p_thickness = 1, 
 	return style;
 }
 
-// See also `generate_icon()` in `scene/resources/default_theme.cpp`.
+// See also `generate_icon()` in `scene/theme/default_theme.cpp`.
 static Ref<ImageTexture> editor_generate_icon(int p_index, float p_scale, float p_saturation, const HashMap<Color, Color> &p_convert_colors = HashMap<Color, Color>()) {
 	Ref<Image> img = memnew(Image);
 
@@ -1506,6 +1506,11 @@ Ref<Theme> create_editor_theme(const Ref<Theme> p_theme) {
 	Ref<StyleBoxFlat> style_theme_preview_bg_tab = style_tab_unselected->duplicate();
 	style_theme_preview_bg_tab->set_expand_margin(SIDE_BOTTOM, 2 * EDSCALE);
 	theme->set_stylebox("ThemeEditorPreviewBG", "EditorStyles", style_theme_preview_bg_tab);
+
+	Ref<StyleBoxFlat> style_texture_region_bg = style_tree_bg->duplicate();
+	style_texture_region_bg->set_content_margin_all(0);
+	theme->set_stylebox("TextureRegionPreviewBG", "EditorStyles", style_texture_region_bg);
+	theme->set_stylebox("TextureRegionPreviewFG", "EditorStyles", make_empty_stylebox(0, 0, 0, 0));
 
 	// Separators
 	theme->set_stylebox("separator", "HSeparator", make_line_stylebox(separator_color, MAX(Math::round(EDSCALE), border_width)));
