@@ -485,7 +485,7 @@ void Object::get_property_list(List<PropertyInfo> *p_list, bool p_reversed) cons
 	if (_extension) {
 		const ObjectGDExtension *current_extension = _extension;
 		while (current_extension) {
-			p_list->push_back(PropertyInfo(Variant::NIL, current_extension->class_name, PROPERTY_HINT_NONE, String(), PROPERTY_USAGE_CATEGORY));
+			p_list->push_back(PropertyInfo(Variant::NIL, current_extension->class_name, PROPERTY_HINT_NONE, current_extension->class_name, PROPERTY_USAGE_CATEGORY));
 
 			ClassDB::get_property_list(current_extension->class_name, p_list, true, this);
 
@@ -809,7 +809,7 @@ void Object::notification(int p_notification, bool p_reversed) {
 
 	if (_extension) {
 		if (_extension->notification2) {
-			_extension->notification2(_extension_instance, p_notification, p_reversed);
+			_extension->notification2(_extension_instance, p_notification, static_cast<GDExtensionBool>(p_reversed));
 #ifndef DISABLE_DEPRECATED
 		} else if (_extension->notification) {
 			_extension->notification(_extension_instance, p_notification);
