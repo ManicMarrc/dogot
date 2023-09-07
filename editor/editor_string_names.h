@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  GodotPluginInfoProvider.java                                          */
+/*  editor_string_names.h                                                 */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,45 +28,31 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-package org.godotengine.godot.plugin;
+#ifndef EDITOR_STRING_NAMES_H
+#define EDITOR_STRING_NAMES_H
 
-import androidx.annotation.NonNull;
+#include "core/string/string_name.h"
 
-import java.util.Collections;
-import java.util.Set;
+class EditorStringNames {
+	static EditorStringNames *singleton;
 
-/**
- * Provides the set of information expected from a Godot plugin.
- */
-public interface GodotPluginInfoProvider {
-	/**
-	 * Returns the name of the plugin.
-	 */
-	@NonNull
-	String getPluginName();
+	EditorStringNames();
 
-	/**
-	 * Returns the list of signals to be exposed to Godot.
-	 */
-	@NonNull
-	default Set<SignalInfo> getPluginSignals() {
-		return Collections.emptySet();
+public:
+	static void create() { singleton = memnew(EditorStringNames); }
+	static void free() {
+		memdelete(singleton);
+		singleton = nullptr;
 	}
 
-	/**
-	 * Returns the paths for the plugin's gdextension libraries (if any).
-	 *
-	 * The paths must be relative to the 'assets' directory and point to a '*.gdextension' file.
-	 */
-	@NonNull
-	default Set<String> getPluginGDExtensionLibrariesPaths() {
-		return Collections.emptySet();
-	}
+	_FORCE_INLINE_ static EditorStringNames *get_singleton() { return singleton; }
 
-	/**
-	 * This is invoked on the render thread when the plugin described by this instance has been
-	 * registered.
-	 */
-	default void onPluginRegistered() {
-	}
-}
+	StringName Editor;
+	StringName EditorFonts;
+	StringName EditorIcons;
+	StringName EditorStyles;
+};
+
+#define EditorStringName(m_name) EditorStringNames::get_singleton()->m_name
+
+#endif // EDITOR_STRING_NAMES_H
