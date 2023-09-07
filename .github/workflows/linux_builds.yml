@@ -34,7 +34,7 @@ jobs:
             sconsflags: debug_symbols=no
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
@@ -77,6 +77,15 @@ jobs:
       - name: Setup python and scons
         uses: ./.github/actions/godot-deps
 
+<<<<<<< HEAD
+=======
+      - name: Set up .NET Sdk
+        uses: actions/setup-dotnet@v3
+        if: ${{ matrix.build-mono }}
+        with:
+          dotnet-version: '6.0.x'
+
+>>>>>>> 8449592d92eaeef990f5502b419d491ee3eeb7a6
       - name: Setup GCC problem matcher
         uses: ammaraskar/gcc-problem-matcher@master
 
